@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Discarten — Lista de Precios</title>
+<style>
+  :root{
+    --carbon: #211d1a;
+    --carbon-suave: #2b2521;
+    --crema: #f6efe3;
+    --crema-suave: #efe4d1;
+    --rojo: #9c2b1f;
+    --rojo-vivo: #b8362a;
+    --oro: #c08a35;
+    --oro-suave: #d9b876;
+    --linea: rgba(255,255,255,0.09);
+    --linea-clara: rgba(33,29,26,0.1);
+  }
+  *{ box-sizing: border-box; }
+  body{
+    margin:0;
+    background: #d8cfc0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: var(--carbon);
+    font-weight: 700;
+  }
+  .hoja{
+    max-width: 1240px;
+    margin: 24px auto;
+    background: var(--crema);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+
+  /* ===== CABECERA ===== */
+  .cabecera{
+    background: linear-gradient(160deg, var(--carbon) 0%, #17130f 100%);
+    color: var(--crema);
+    padding: 44px 40px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cabecera::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:260px; height:260px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(192,138,53,0.16) 0%, transparent 70%);
+  }
+  .marca-fila{
+    display:flex;
+    align-items:baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    position:relative;
+    z-index: 1;
+  }
+  .logo-img{
+    display:block;
+    max-width: 340px;
+    width: 100%;
+    height:auto;
+    border-radius: 4px;
+  }
+  .eslogan{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.15rem;
+    color: var(--oro-suave);
+    margin: 4px 0 0;
+  }
+  .sellos{
+    display:flex;
+    gap: 22px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+    position:relative;
+    z-index:1;
+  }
+  .sello{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size: 0.82rem;
+    letter-spacing: 0.3px;
+    color: var(--crema-suave);
+    padding: 7px 14px;
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* ===== DATOS DE CONTACTO ===== */
+  .datos{
+    background: var(--oro);
+    color: var(--carbon);
+    text-align:center;
+    padding: 11px 20px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+
+  /* ===== INFO REPARTO / PEDIDOS ===== */
+  .info-franja{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--linea-clara);
+  }
+  .info-bloque{
+    padding: 20px 40px;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+  .info-bloque:first-child{ border-right: 1px solid var(--linea-clara); }
+  .info-titulo{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 1.02rem;
+    color: var(--rojo);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom: 6px;
+  }
+  .info-bloque strong{ color: var(--carbon); }
+
+  /* ===== LLAMADA A LA ACCIÓN ===== */
+  .cta{
+    background: var(--rojo);
+    color: var(--crema);
+    text-align:center;
+    padding: 16px 20px;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .cta a{ color: var(--oro-suave); text-decoration: none; border-bottom: 1px dashed var(--oro-suave); }
+
+  /* ===== COLUMNAS DE PRODUCTOS ===== */
+  .columnas{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .columna{ padding: 34px 40px; }
+  .columna:first-child{ border-right: 1px solid var(--linea-clara); }
+
+  .familia{ margin-bottom: 34px; }
+  .familia:last-child{ margin-bottom: 0; }
+
+  .familia-cab{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+    border-bottom: 2px solid var(--carbon);
+  }
+  .familia-emoji{ font-size: 1.4rem; line-height:1; display:flex; align-items:center; }
+  .familia-icono svg{ display:block; }
+  .familia-nombre{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 1.18rem;
+    letter-spacing: 0.2px;
+    color: var(--carbon);
+    text-transform: uppercase;
+  }
+
+  table{ width:100%; border-collapse: collapse; }
+  thead th{ padding:0; border:none; height:0; line-height:0; }
+  thead .th-cant{
+    text-align:right;
+    font-size: 0.68rem;
+    color:#8a7d6c;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    height:auto;
+    line-height:normal;
+    padding: 0 4px 4px;
+  }
+  tr{ border-bottom: 1px solid var(--linea-clara); }
+  tr:last-child{ border-bottom: none; }
+  tr:hover td{ background: var(--crema-suave); }
+  td.cantidad-col{ width: 108px; padding: 6px 4px; }
+  .stepper{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap: 4px;
+  }
+  .stepper button{
+    width: 24px; height: 24px;
+    border-radius: 5px;
+    border: 1px solid var(--rojo);
+    background: var(--crema);
+    color: var(--rojo);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1;
+    cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    padding:0;
+    flex-shrink:0;
+  }
+  .stepper button:active{ background: var(--rojo); color: var(--crema); }
+  .qty-input{
+    width: 40px;
+    text-align:center;
+    border: 1px solid var(--linea-clara);
+    border-radius: 5px;
+    padding: 3px 2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--carbon);
+    background: #fff;
+    -moz-appearance: textfield;
+  }
+  .qty-input::-webkit-outer-spin-button,
+  .qty-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  tr.fila-pedido.con-cantidad td{ background: rgba(192,138,53,0.12); }
+
+  /* ===== BARRA DE RESUMEN / PEDIDO ===== */
+  .barra-pedido{
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    background: var(--carbon);
+    color: var(--crema);
+    padding: 14px 24px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.25);
+  }
+  .barra-info{ font-size: 0.9rem; color: var(--crema-suave); }
+  .barra-info strong{ color: var(--oro-suave); font-size: 1.15rem; }
+  .barra-botones{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn-limpiar{
+    background: transparent;
+    color: var(--crema-suave);
+    border: 1px solid var(--linea);
+    border-radius: 999px;
+    padding: 12px 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    transition: background 0.12s ease;
+  }
+  .btn-limpiar:hover{ background: rgba(255,255,255,0.08); }
+  .btn-enviar{
+    background: var(--oro);
+    color: var(--carbon);
+    border: none;
+    border-radius: 999px;
+    padding: 12px 26px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    transition: transform 0.12s ease;
+  }
+  .btn-enviar:hover{ transform: translateY(-1px); }
+  .btn-enviar:disabled{ opacity: 0.45; cursor: not-allowed; transform:none; }
+  td{
+    padding: 9px 4px;
+    font-size: 0.93rem;
+    vertical-align: middle;
+  }
+  td.nombre{ color: #3a332c; font-weight: 700; }
+  td.precio{
+    text-align:right;
+    color: var(--rojo);
+    font-weight: 800;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .unidad{ font-weight:500; color:#8a7d6c; font-size:0.82rem; }
+
+  .ref-code{
+    display:block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #a89a85;
+    letter-spacing: 0.2px;
+    margin-bottom: 1px;
+  }
+  .etq{
+    display:inline-block;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+  .etq-nuevo{ background: var(--oro); color: var(--carbon); }
+  .etq-top{ background: var(--carbon); color: var(--oro-suave); }
+
+  /* ===== PIE ===== */
+  .pie{
+    background: var(--carbon);
+    color: var(--crema-suave);
+    text-align:center;
+    padding: 22px 20px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .pie strong{ color: var(--oro-suave); }
+
+  @media (max-width: 820px){
+    .columnas, .info-franja{ grid-template-columns: 1fr; }
+    .columna:first-child, .info-bloque:first-child{ border-right: none; border-bottom: 1px solid var(--linea-clara); }
+    .logo-txt{ font-size: 2.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <!-- CABECERA -->
+  <div class="cabecera">
+    <div class="marca-fila">
+      <div>
+        <img class="logo-img" src="data:image/jpeg;base64,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e0U0bIgHGy8/xuiqJqxz42EjZkOSjCrWhT+o8dfVjP3nLu973Rh+f8QdQz3LN2OkwRg6x3+Gy3O6VdTdKUQBtTCA0EEkbQBzqTLURFhAcMlWU2HVTZmExm1xu5rVURFmV6miIiIiIiIiIiIiIiIiIiIuQcjmNh5wsrQYovtsy7ju1XEPo8ISPUViUXIOLciut8TJBZ4B91u9JpbxTTDKSenqR/1YRn9mSzEWm65taBLaaV55S2RwzUwRd4qphk5V78Ion7TGPx+FU3acKzLwbLAD5Zj7l0avTRfptlNSUdMMt+ReftKnSL6auY/8lwbg1E038sfus/c8cYku4Laq7T8Gd7IjwbfsWBJJJJJJO8nlXCKO57nbXG6sooY4haNoHsiIi4rtRERERERERERERERETIcwTIcwREXyyIiIvqIiIiIiIiJkOZEREyHMPUmWXIiIvlkRERfURERFyuERERERERERERERERERERERERERERERERERETIcw9SZAciIi+WRERF9RERERMhzBEREyHMEREREREREREREREREREREREREREREREREREREU2493jo/Vdqce7x0fqu1WGr5eSzfqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtTj3eOj9V2pq+XknqSj4Hp3VJRTbj3eOj9V2px7vHR+q7U1fLyT1JR8D07qkoptx7vHR+q7U493jo/Vdqavl5J6ko+B6d1SUU2493jo/Vdqce7x0fqu1NXy8k9SUfA9O6pKKbce7x0fqu1OPd46P1Xamr5eSepKPgendUlFNuPd46P1XanHu8dH6rtTV8vJPUlHwPTuqSim3Hu8dH6rtRNXy8k9SUfA9O6/9k=" alt="Discarten">
+        <p class="eslogan">De Discarten a tu negocio</p>
+      </div>
+    </div>
+    <div class="sellos">
+      <div class="sello">🔪 Corte artesanal diario</div>
+      <div class="sello">🚚 Reparto propio</div>
+      <div class="sello">✔️ Trazabilidad garantizada</div>
+    </div>
+  </div>
+
+  <div class="datos">
+    ALOYAM CANARIAS SLU &nbsp;·&nbsp; Carnicería Discarten &nbsp;·&nbsp; Calle San Cristóbal, Ravelo (El Sauzal, Tenerife) &nbsp;·&nbsp; Tel: 922 584 678
+  </div>
+
+  <!-- REPARTO / PEDIDOS -->
+  <div class="info-franja">
+    <div class="info-bloque">
+      <p class="info-titulo">📦 Reparto</p>
+      <strong>Martes:</strong> Norte, Centro y Sur<br>
+      <strong>Miércoles:</strong> Centro<br>
+      <strong>Jueves:</strong> Centro y Sur<br>
+      <strong>Viernes:</strong> Centro y Norte
+    </div>
+    <div class="info-bloque">
+      <p class="info-titulo">📱 Pedidos</p>
+      Los pedidos se recibirán <strong>únicamente por WhatsApp</strong> al <strong>922 584 678</strong>.<br>
+      Encárgalo hoy y lo tienes fresco en tu próximo reparto.
+    </div>
+  </div>
+
+  <div class="cta">
+    ¿Hacemos el pedido de esta semana? Escríbenos por WhatsApp al <a href="https://wa.me/34922584678">922 584 678</a> 🥩
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div class="columnas">
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="columna">
+
+      <div class="familia">
+        <div class="familia-cab">
+          <span class="familia-emoji">🐖</span>
+          <span class="familia-nombre">Cochino Fresco</span>
+        </div>
+        <table>
+          <thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+          <tr class="fila-pedido" data-price="4.30" data-nombre="Cochino Canal País (40-45 kg aprox)" data-min="42.5" data-step="42.5" data-ref="35"><td class="nombre"><span class="ref-code">Ref. 35</span>Cochino Canal País (40-45 kg aprox)</td><td class="precio">4,30 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="42.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.05" data-nombre="Cochino Canal Picado (40-45 kg aprox)" data-min="42.5" data-step="42.5" data-ref="51"><td class="nombre"><span class="ref-code">Ref. 51</span>Cochino Canal Picado (40-45 kg aprox)</td><td class="precio">5,05 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="42.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.10" data-nombre="Jamón de Cochino (12 kg aprox)" data-min="12" data-step="12" data-ref="8"><td class="nombre"><span class="ref-code">Ref. 8</span>Jamón de Cochino (12 kg aprox)</td><td class="precio">4,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="12" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.10" data-nombre="Jamón cochino picado (12 kg aprox)" data-min="12" data-step="12" data-ref="53"><td class="nombre"><span class="ref-code">Ref. 53</span>Jamón cochino picado (12 kg aprox)</td><td class="precio">5,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="12" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.85" data-nombre="Jamón cochino deshuesado (9 kg aprox)" data-min="9" data-step="9" data-ref="6"><td class="nombre"><span class="ref-code">Ref. 6</span>Jamón cochino deshuesado (9 kg aprox)</td><td class="precio">5,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="9" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="8.20" data-nombre="Bistec jamón cochino (+5 kilos)" data-min="5" data-ref="202"><td class="nombre"><span class="ref-code">Ref. 202</span>Bistec jamón cochino (+5 kilos)</td><td class="precio">8,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.50" data-nombre="Centro de Cochino (18 kg aprox)" data-min="18" data-step="18" data-ref="11"><td class="nombre"><span class="ref-code">Ref. 11</span>Centro de Cochino (18 kg aprox)</td><td class="precio">5,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="18" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="6.50" data-nombre="Centro de cochino picado (18 kg aprox)" data-min="18" data-step="18" data-ref="101"><td class="nombre"><span class="ref-code">Ref. 101</span>Centro de cochino picado (18 kg aprox)</td><td class="precio">6,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="18" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.95" data-nombre="Chuleta cochino XL (+5 kilos)" data-min="5" data-ref="300"><td class="nombre"><span class="ref-code">Ref. 300</span>Chuleta cochino XL (+5 kilos)<span class="etq etq-top">Top</span></td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="10.75" data-nombre="Solomillo de Cerdo" data-ref="14"><td class="nombre"><span class="ref-code">Ref. 14</span>Solomillo de Cerdo</td><td class="precio">10,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="10.95" data-nombre="Secreto Duroc" data-ref="160"><td class="nombre"><span class="ref-code">Ref. 160</span>Secreto Duroc<span class="etq etq-top">Top</span></td><td class="precio">10,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.10" data-nombre="Paleta de Cochino (7,5 kg aprox)" data-min="7.5" data-step="7.5" data-ref="9"><td class="nombre"><span class="ref-code">Ref. 9</span>Paleta de Cochino (7,5 kg aprox)</td><td class="precio">4,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="7.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.10" data-nombre="Paleta cochino picada (7,5 kg aprox)" data-min="7.5" data-step="7.5" data-ref="55"><td class="nombre"><span class="ref-code">Ref. 55</span>Paleta cochino picada (7,5 kg aprox)</td><td class="precio">5,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="7.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.25" data-nombre="Paleta cochino deshuesada (5,5 kg aprox)" data-min="5.5" data-step="5.5" data-ref="7"><td class="nombre"><span class="ref-code">Ref. 7</span>Paleta cochino deshuesada (5,5 kg aprox)</td><td class="precio">5,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="5.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.20" data-nombre="Carne fiesta paleta (+5 kilos)" data-min="5" data-ref="201"><td class="nombre"><span class="ref-code">Ref. 201</span>Carne fiesta paleta (+5 kilos)</td><td class="precio">7,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="6.85" data-nombre="Costillar de cochino c/piel (entre 6-7 kilos)" data-min="6.5" data-step="6.5" data-ref="12"><td class="nombre"><span class="ref-code">Ref. 12</span>Costillar de cochino c/piel (entre 6-7 kilos)</td><td class="precio">6,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="6.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.85" data-nombre="Costillar c/piel picado (entre 6-7 kilos)" data-min="6.5" data-step="6.5" data-ref="52"><td class="nombre"><span class="ref-code">Ref. 52</span>Costillar c/piel picado (entre 6-7 kilos)</td><td class="precio">7,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="6.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="8.25" data-nombre="Costillar cochino sin piel (entre 5-6 kilos)" data-min="5.5" data-step="5.5" data-ref="64"><td class="nombre"><span class="ref-code">Ref. 64</span>Costillar cochino sin piel (entre 5-6 kilos)</td><td class="precio">8,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="5.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="9.25" data-nombre="Costillas cochino sin piel" data-ref="108"><td class="nombre"><span class="ref-code">Ref. 108</span>Costillas cochino sin piel</td><td class="precio">9,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="8.95" data-nombre="Costillas de cochino c/piel" data-ref="5"><td class="nombre"><span class="ref-code">Ref. 5</span>Costillas de cochino c/piel</td><td class="precio">8,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="6.95" data-nombre="Picada de cochino (+5 kilos)" data-min="5" data-ref="67"><td class="nombre"><span class="ref-code">Ref. 67</span>Picada de cochino (+5 kilos)</td><td class="precio">6,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.50" data-nombre="Asadura de cochino entera (entre 4-5 kilos)" data-min="4.5" data-step="4.5" data-ref="43"><td class="nombre"><span class="ref-code">Ref. 43</span>Asadura de cochino entera (entre 4-5 kilos)</td><td class="precio">4,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="4.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.20" data-nombre="Asadura de cochino picada (entre 4-5 kilos)" data-min="4.5" data-step="4.5" data-ref="16"><td class="nombre"><span class="ref-code">Ref. 16</span>Asadura de cochino picada (entre 4-5 kilos)</td><td class="precio">5,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="4.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+        </table>
+      </div>
+
+      <div class="familia">
+        <div class="familia-cab">
+          <span class="familia-emoji">🐔🐐🐇</span>
+          <span class="familia-nombre">Pollo, Cabra y Conejo</span>
+        </div>
+        <table>
+          <thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+          <tr class="fila-pedido" data-price="4.85" data-nombre="Pollos frescos asar" data-ref="87"><td class="nombre"><span class="ref-code">Ref. 87</span>Pollos frescos asar</td><td class="precio">4,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.40" data-nombre="Pollo asar picado" data-ref="88"><td class="nombre"><span class="ref-code">Ref. 88</span>Pollo asar picado</td><td class="precio">5,40 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.85" data-nombre="Pollo sopa - arroz entero" data-ref="187"><td class="nombre"><span class="ref-code">Ref. 187</span>Pollo sopa - arroz entero</td><td class="precio">4,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="5.40" data-nombre="Pollo sopa - arroz picado" data-ref="188"><td class="nombre"><span class="ref-code">Ref. 188</span>Pollo sopa - arroz picado</td><td class="precio">5,40 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="9.95" data-nombre="Conejos frescos (1,5 kg aprox)" data-min="1.5" data-step="1.5" data-ref="18"><td class="nombre"><span class="ref-code">Ref. 18</span>Conejos frescos (1,5 kg aprox)</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="10.50" data-nombre="Conejos frescos picados (1,5 kg aprox)" data-min="1.5" data-step="1.5" data-ref="65"><td class="nombre"><span class="ref-code">Ref. 65</span>Conejos frescos picados (1,5 kg aprox)</td><td class="precio">10,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.80" data-nombre="Cabra fresca entera (15 kg aprox)" data-min="15" data-step="15" data-ref="40"><td class="nombre"><span class="ref-code">Ref. 40</span>Cabra fresca entera (15 kg aprox)</td><td class="precio">7,80 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="15" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="9.75" data-nombre="Cabra fresca picada (+5 kilos)" data-min="5" data-ref="17"><td class="nombre"><span class="ref-code">Ref. 17</span>Cabra fresca picada (+5 kilos)</td><td class="precio">9,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+        </table>
+      </div>
+
+      <div class="familia">
+        <div class="familia-cab">
+          <span class="familia-emoji">🍔</span>
+          <span class="familia-nombre">Burgers</span>
+        </div>
+        <table>
+          <thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Uds</th></tr></thead>
+          <tr class="fila-pedido" data-price="7.95" data-nombre="Burguer Meat Cochino Canario 120g" data-peso-unidad="0.12" data-ref="100173"><td class="nombre"><span class="ref-code">Ref. 100173</span>Burguer Meat Cochino Canario 120g</td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="9.95" data-nombre="Burguer Meat Pollo Canario 120g" data-peso-unidad="0.12" data-ref="150152"><td class="nombre"><span class="ref-code">Ref. 150152</span>Burguer Meat Pollo Canario 120g</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="10.95" data-nombre="Burguer Meat Cochino Negro 150g" data-peso-unidad="0.15" data-ref="154"><td class="nombre"><span class="ref-code">Ref. 154</span>Burguer Meat Cochino Negro 150g</td><td class="precio">10,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="11.20" data-nombre="Burguer Ternera / Cerdo Canario 120g" data-peso-unidad="0.12" data-ref="252"><td class="nombre"><span class="ref-code">Ref. 252</span>Burguer Ternera / Cerdo Canario 120g</td><td class="precio">11,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="14.50" data-nombre="Burguer Meat Ternera Canaria 150g" data-peso-unidad="0.15" data-ref="205"><td class="nombre"><span class="ref-code">Ref. 205</span>Burguer Meat Ternera Canaria 150g</td><td class="precio">14,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="17.50" data-nombre="Ternera Canaria La Madurita 150g (+30d)" data-peso-unidad="0.15" data-ref="285"><td class="nombre"><span class="ref-code">Ref. 285</span>Ternera Canaria La Madurita 150g (+30d)<span class="etq etq-top">Top</span></td><td class="precio">17,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div class="columna">
+
+      <div class="familia">
+        <div class="familia-cab">
+          <span class="familia-emoji">🐄</span>
+          <span class="familia-nombre">Añojo Fresco</span>
+        </div>
+        <table>
+          <thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+          <tr class="fila-pedido" data-price="8.35" data-nombre="Picada de Añojo 2ª y Cochino (+5 kilos)" data-min="5" data-ref="68"><td class="nombre"><span class="ref-code">Ref. 68</span>Picada de Añojo 2ª y Cochino (+5 kilos)</td><td class="precio">8,35 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="9.95" data-nombre="Picada Añojo 2ª (+5 kilos)" data-min="5" data-ref="39"><td class="nombre"><span class="ref-code">Ref. 39</span>Picada Añojo 2ª (+5 kilos)</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="12.10" data-nombre="Falda de Añojo (+5 kilos)" data-min="5" data-ref="111"><td class="nombre"><span class="ref-code">Ref. 111</span>Falda de Añojo (+5 kilos)</td><td class="precio">12,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="12.10" data-nombre="Componer Añojo 2ª (+5 kilos)" data-min="5" data-ref="115"><td class="nombre"><span class="ref-code">Ref. 115</span>Componer Añojo 2ª (+5 kilos)</td><td class="precio">12,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="16.95" data-nombre="Lomo Añojo c/Solomillo (30 kg aprox)" data-min="30" data-step="30" data-ref="79"><td class="nombre"><span class="ref-code">Ref. 79</span>Lomo Añojo c/Solomillo (30 kg aprox)</td><td class="precio">16,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="30" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="17.95" data-nombre="Lomo Añojo c/Solomillo Picado (30 kg aprox)" data-min="30" data-step="30" data-ref="179"><td class="nombre"><span class="ref-code">Ref. 179</span>Lomo Añojo c/Solomillo Picado (30 kg aprox)</td><td class="precio">17,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="30" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="19.85" data-nombre="Chuletón de Añojo" data-ref="70"><td class="nombre"><span class="ref-code">Ref. 70</span>Chuletón de Añojo<span class="etq etq-top">Top</span></td><td class="precio">19,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="20.45" data-nombre="T-Bone Añojo" data-ref="96"><td class="nombre"><span class="ref-code">Ref. 96</span>T-Bone Añojo<span class="etq etq-top">Top</span></td><td class="precio">20,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="14.20" data-nombre="Bistec Novillo" data-ref="171"><td class="nombre"><span class="ref-code">Ref. 171</span>Bistec Novillo</td><td class="precio">14,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+        </table>
+      </div>
+
+      <div class="familia">
+        <div class="familia-cab">
+          <span class="familia-emoji familia-icono">
+            <svg width="26" height="26" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 14c0-3.5 2.8-6 6.2-6 2.2 0 4 1.1 5.1 2.8C21 9.1 23.4 8 26 8c3.6 0 6.5 2.2 7.4 5.4C36.8 14 39.5 17 39.5 21c0 3.6-2.4 6.3-5.6 7.1C33 31.6 30.2 34 26.8 34c-2 0-3.8-.8-5-2.1C20.5 33.4 18.5 34 16.3 34 11.2 34 7 29.9 7 24.8c0-2.7 1.2-5.1 3.1-6.7C9.1 17 8 15.6 8 14z" fill="#8a4a2b"/>
+              <path d="M11.5 15.5c1.5-1.5 3.7-1.7 5-.4M23.5 11.5c1.6-1.2 3.8-1.2 5.3.1M30 17c1.7-.7 3.7-.2 4.8 1.2M14 24c1.7-1 3.8-.8 5.1.6M25 26c1.6-1 3.7-.7 4.9.6" stroke="#5c3018" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+              <circle cx="14.5" cy="9" r="2.6" fill="#5c3018"/>
+              <circle cx="34" cy="15" r="2.6" fill="#5c3018"/>
+              <circle cx="30" cy="31" r="2.6" fill="#5c3018"/>
+            </svg>
+          </span>
+          <span class="familia-nombre">Productos de Elaboración Propia, Salados y Guisos</span>
+        </div>
+        <table>
+          <thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+          <tr class="fila-pedido" data-price="6.50" data-nombre="Picadillo Salado (1kg manitas, orejas, morros y papada)" data-ref="22"><td class="nombre"><span class="ref-code">Ref. 22</span>Picadillo Salado (1kg manitas, orejas, morros y papada)</td><td class="precio">6,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.95" data-nombre="Costillas Punto Sal (+5 kilos)" data-min="5" data-ref="27"><td class="nombre"><span class="ref-code">Ref. 27</span>Costillas Punto Sal (+5 kilos)</td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="8.45" data-nombre="Costillas Punto Sal Cortadas (+5 kilos)" data-min="5" data-ref="105"><td class="nombre"><span class="ref-code">Ref. 105</span>Costillas Punto Sal Cortadas (+5 kilos)</td><td class="precio">8,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="7.20" data-nombre="Panceta Salada" data-ref="197"><td class="nombre"><span class="ref-code">Ref. 197</span>Panceta Salada</td><td class="precio">7,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.95" data-nombre="Papada Salada" data-ref="61"><td class="nombre"><span class="ref-code">Ref. 61</span>Papada Salada</td><td class="precio">4,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="3.50" data-nombre="Manitas Saladas" data-ref="92"><td class="nombre"><span class="ref-code">Ref. 92</span>Manitas Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="4.45" data-nombre="Manitas Saladas Picadas" data-ref="98"><td class="nombre"><span class="ref-code">Ref. 98</span>Manitas Saladas Picadas</td><td class="precio">4,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="3.50" data-nombre="Orejas Cerdo Saladas" data-ref="97"><td class="nombre"><span class="ref-code">Ref. 97</span>Orejas Cerdo Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+          <tr class="fila-pedido" data-price="8.75" data-nombre="Bacon Horneado Ahumado" data-ref="8010000465"><td class="nombre"><span class="ref-code">Ref. 8010000465</span>Bacon Horneado Ahumado</td><td class="precio">8,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="
