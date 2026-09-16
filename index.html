@@ -496,4 +496,236 @@
           <tr class="fila-pedido" data-price="3.50" data-nombre="Manitas Saladas" data-ref="92"><td class="nombre"><span class="ref-code">Ref. 92</span>Manitas Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
           <tr class="fila-pedido" data-price="4.45" data-nombre="Manitas Saladas Picadas" data-ref="98"><td class="nombre"><span class="ref-code">Ref. 98</span>Manitas Saladas Picadas</td><td class="precio">4,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
           <tr class="fila-pedido" data-price="3.50" data-nombre="Orejas Cerdo Saladas" data-ref="97"><td class="nombre"><span class="ref-code">Ref. 97</span>Orejas Cerdo Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
-          <tr class="fila-pedido" data-price="8.75" data-nombre="Bacon Horneado Ahumado" data-ref="8010000465"><td class="nombre"><span class="ref-code">Ref. 8010000465</span>Bacon Horneado Ahumado</td><td class="precio">8,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="
+          <tr class="fila-pedido" data-price="8.75" data-nombre="Bacon Horneado Ahumado" data-ref="8010000465"><td class="nombre"><span class="ref-code">Ref. 8010000465</span>Bacon Horneado Ahumado</td><td class="precio">8,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<!-- BARRA DE PEDIDO -->
+<div class="barra-pedido">
+  <div class="barra-info">Total del pedido: <strong id="total-pedido">0,00 €</strong></div>
+  <div class="barra-botones">
+    <button type="button" class="btn-limpiar" id="btn-limpiar">🗑️ Vaciar pedido</button>
+    <button type="button" class="btn-enviar" id="btn-enviar" disabled>📲 Enviar pedido por WhatsApp</button>
+  </div>
+</div>
+
+<!-- PIE -->
+<div class="pie">
+  <strong>Carnicería Discarten</strong> · ALOYAM CANARIAS SLU · Calle San Cristóbal, Ravelo (El Sauzal, Tenerife)
+</div>
+
+</div>
+
+<script>
+(function(){
+  var filas = document.querySelectorAll('.fila-pedido');
+  var totalEl = document.getElementById('total-pedido');
+  var btnEnviar = document.getElementById('btn-enviar');
+  var btnLimpiar = document.getElementById('btn-limpiar');
+
+  function calcularTotal(){
+    var total = 0;
+    var hayCantidad = false;
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var precio = parseFloat(fila.dataset.price) || 0;
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        hayCantidad = true;
+        total += precio * cantidad;
+      }
+    });
+    totalEl.textContent = total.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+    btnEnviar.disabled = !hayCantidad;
+  }
+
+  filas.forEach(function(fila){
+    var input = fila.querySelector('.qty-input');
+    var btnMas = fila.querySelector('.btn-mas');
+    var btnMenos = fila.querySelector('.btn-menos');
+    var step = parseFloat(fila.dataset.step) || parseFloat(input.step) || 1;
+    var min = parseFloat(fila.dataset.min) || 0;
+
+    function actualizar(valor){
+      valor = Math.max(0, valor);
+      valor = Math.round(valor * 100) / 100;
+      input.value = valor;
+      if(valor > 0){
+        fila.classList.add('con-cantidad');
+      } else {
+        fila.classList.remove('con-cantidad');
+      }
+      calcularTotal();
+    }
+
+    btnMas.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      if(actual === 0 && min > 0){
+        actualizar(min);
+      } else {
+        actualizar(actual + step);
+      }
+    });
+
+    btnMenos.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      var nuevo = actual - step;
+      if(min > 0 && nuevo < min){
+        nuevo = 0;
+      }
+      actualizar(nuevo);
+    });
+
+    input.addEventListener('change', function(){
+      actualizar(parseFloat(input.value) || 0);
+    });
+  });
+
+  btnLimpiar.addEventListener('click', function(){
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      input.value = 0;
+      fila.classList.remove('con-cantidad');
+    });
+    calcularTotal();
+  });
+
+  btnEnviar.addEventListener('click', function(){
+    var lineas = [];
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        var nombre = fila.dataset.nombre;
+        lineas.push('• ' + nombre + ': ' + cantidad + ' kg/uds');
+      }
+    });
+    if(lineas.length === 0) return;
+    var mensaje = 'Hola, quiero hacer este pedido:%0A%0A' + lineas.join('%0A');
+    window.open('https://wa.me/34922584678?text=' + mensaje, '_blank');
+  });
+
+  calcularTotal();
+})();
+</script>
+
+</body>
+</html>
+</table>
+</div>
+</div>
+</div>
+
+<!-- BARRA DE PEDIDO -->
+<div class="barra-pedido">
+  <div class="barra-info">Total del pedido: <strong id="total-pedido">0,00 €</strong></div>
+  <div class="barra-botones">
+    <button type="button" class="btn-limpiar" id="btn-limpiar">🗑️ Vaciar pedido</button>
+    <button type="button" class="btn-enviar" id="btn-enviar" disabled>📲 Enviar pedido por WhatsApp</button>
+  </div>
+</div>
+
+<!-- PIE -->
+<div class="pie">
+  <strong>Carnicería Discarten</strong> · ALOYAM CANARIAS SLU · Calle San Cristóbal, Ravelo (El Sauzal, Tenerife)
+</div>
+
+</div>
+
+<script>
+(function(){
+  var filas = document.querySelectorAll('.fila-pedido');
+  var totalEl = document.getElementById('total-pedido');
+  var btnEnviar = document.getElementById('btn-enviar');
+  var btnLimpiar = document.getElementById('btn-limpiar');
+
+  function calcularTotal(){
+    var total = 0;
+    var hayCantidad = false;
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var precio = parseFloat(fila.dataset.price) || 0;
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        hayCantidad = true;
+        total += precio * cantidad;
+      }
+    });
+    totalEl.textContent = total.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+    btnEnviar.disabled = !hayCantidad;
+  }
+
+  filas.forEach(function(fila){
+    var input = fila.querySelector('.qty-input');
+    var btnMas = fila.querySelector('.btn-mas');
+    var btnMenos = fila.querySelector('.btn-menos');
+    var step = parseFloat(fila.dataset.step) || parseFloat(input.step) || 1;
+    var min = parseFloat(fila.dataset.min) || 0;
+
+    function actualizar(valor){
+      valor = Math.max(0, valor);
+      valor = Math.round(valor * 100) / 100;
+      input.value = valor;
+      if(valor > 0){
+        fila.classList.add('con-cantidad');
+      } else {
+        fila.classList.remove('con-cantidad');
+      }
+      calcularTotal();
+    }
+
+    btnMas.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      if(actual === 0 && min > 0){
+        actualizar(min);
+      } else {
+        actualizar(actual + step);
+      }
+    });
+
+    btnMenos.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      var nuevo = actual - step;
+      if(min > 0 && nuevo < min){
+        nuevo = 0;
+      }
+      actualizar(nuevo);
+    });
+
+    input.addEventListener('change', function(){
+      actualizar(parseFloat(input.value) || 0);
+    });
+  });
+
+  btnLimpiar.addEventListener('click', function(){
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      input.value = 0;
+      fila.classList.remove('con-cantidad');
+    });
+    calcularTotal();
+  });
+
+  btnEnviar.addEventListener('click', function(){
+    var lineas = [];
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        var nombre = fila.dataset.nombre;
+        lineas.push('• ' + nombre + ': ' + cantidad + ' kg/uds');
+      }
+    });
+    if(lineas.length === 0) return;
+    var mensaje = 'Hola, quiero hacer este pedido:%0A%0A' + lineas.join('%0A');
+    window.open('https://wa.me/34922584678?text=' + mensaje, '_blank');
+  });
+
+  calcularTotal();
+})();
+</script>
+
+</body>
+    </html>
