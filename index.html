@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Discarten — Lista de Precios</title>
+<style>
+:root{
+--carbon: #211d1a;
+--carbon-suave: #2b2521;
+--crema: #f6efe3;
+--crema-suave: #efe4d1;
+--rojo: #9c2b1f;
+--rojo-vivo: #b8362a;
+--oro: #c08a35;
+--oro-suave: #d9b876;
+--linea: rgba(255,255,255,0.09);
+--linea-clara: rgba(33,29,26,0.1);
+}
+*{ box-sizing: border-box; }
+body{
+margin:0;
+background: #d8cfc0;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+color: var(--carbon);
+font-weight: 700;
+}
+.hoja{
+max-width: 1240px;
+margin: 24px auto;
+background: var(--crema);
+box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+}
+.cabecera{
+background: linear-gradient(160deg, var(--carbon) 0%, #17130f 100%);
+color: var(--crema);
+padding: 44px 40px 36px;
+position: relative;
+overflow: hidden;
+}
+.cabecera::after{
+content:"";
+position:absolute;
+right:-60px; top:-60px;
+width:260px; height:260px;
+border-radius:50%;
+background: radial-gradient(circle, rgba(192,138,53,0.16) 0%, transparent 70%);
+}
+.marca-fila{
+display:flex;
+align-items:baseline;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+position:relative;
+z-index: 1;
+}
+.logo-img{
+display:block;
+max-width: 340px;
+width: 100%;
+height:auto;
+border-radius: 4px;
+}
+.logo-txt{
+font-family: Georgia, 'Times New Roman', serif;
+font-weight: 700;
+font-size: 2.6rem;
+letter-spacing: 2px;
+color: var(--crema);
+text-shadow: 0 0 18px rgba(192,138,53,0.35);
+}
+.logo-txt::first-letter{
+color: var(--oro);
+}
+.eslogan{
+font-family: Georgia, 'Times New Roman', serif;
+font-style: italic;
+font-weight: 400;
+font-size: 1.15rem;
+color: var(--oro-suave);
+margin: 4px 0 0;
+}
+.sellos{
+display:flex;
+gap: 22px;
+margin-top: 22px;
+flex-wrap: wrap;
+position:relative;
+z-index:1;
+}
+.sello{
+display:flex;
+align-items:center;
+gap:8px;
+font-size: 0.82rem;
+letter-spacing: 0.3px;
+color: var(--crema-suave);
+padding: 7px 14px;
+border: 1px solid var(--linea);
+border-radius: 999px;
+background: rgba(255,255,255,0.03);
+}
+.datos{
+background: var(--oro);
+color: var(--carbon);
+text-align:center;
+padding: 11px 20px;
+font-size: 0.88rem;
+font-weight: 600;
+letter-spacing: 0.2px;
+}
+.info-franja{
+display:grid;
+grid-template-columns: 1fr 1fr;
+border-bottom: 1px solid var(--linea-clara);
+}
+.info-bloque{
+padding: 20px 40px;
+font-size: 0.92rem;
+line-height: 1.7;
+}
+.info-bloque:first-child{ border-right: 1px solid var(--linea-clara); }
+.info-titulo{
+font-family: Georgia, 'Times New Roman', serif;
+font-weight: 700;
+font-size: 1.02rem;
+color: var(--rojo);
+display:flex;
+align-items:center;
+gap:8px;
+margin-bottom: 6px;
+}
+.info-bloque strong{ color: var(--carbon); }
+.cta{
+background: var(--rojo);
+color: var(--crema);
+text-align:center;
+padding: 16px 20px;
+font-family: Georgia, 'Times New Roman', serif;
+font-size: 1.15rem;
+font-weight: 600;
+}
+.cta a{ color: var(--oro-suave); text-decoration: none; border-bottom: 1px dashed var(--oro-suave); }
+.columnas{
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap: 0;
+}
+.columna{ padding: 34px 40px; }
+.columna:first-child{ border-right: 1px solid var(--linea-clara); }
+.familia{ margin-bottom: 34px; }
+.familia:last-child{ margin-bottom: 0; }
+.familia-cab{
+display:flex;
+align-items:center;
+gap: 10px;
+padding-bottom: 8px;
+margin-bottom: 4px;
+border-bottom: 2px solid var(--carbon);
+}
+.familia-emoji{ font-size: 1.4rem; line-height:1; display:flex; align-items:center; }
+.familia-icono svg{ display:block; }
+.familia-nombre{
+font-family: Georgia, 'Times New Roman', serif;
+font-weight: 700;
+font-size: 1.18rem;
+letter-spacing: 0.2px;
+color: var(--carbon);
+text-transform: uppercase;
+}
+table{ width:100%; border-collapse: collapse; }
+thead th{ padding:0; border:none; height:0; line-height:0; }
+thead .th-cant{
+text-align:right;
+font-size: 0.68rem;
+color:#8a7d6c;
+text-transform: uppercase;
+letter-spacing: 0.4px;
+height:auto;
+line-height:normal;
+padding: 0 4px 4px;
+}
+tr{ border-bottom: 1px solid var(--linea-clara); }
+tr:last-child{ border-bottom: none; }
+tr:hover td{ background: var(--crema-suave); }
+td.cantidad-col{ width: 108px; padding: 6px 4px; }
+.stepper{
+display:flex;
+align-items:center;
+justify-content:flex-end;
+gap: 4px;
+}
+.stepper button{
+width: 24px; height: 24px;
+border-radius: 5px;
+border: 1px solid var(--rojo);
+background: var(--crema);
+color: var(--rojo);
+font-size: 1rem;
+font-weight: 800;
+line-height: 1;
+cursor: pointer;
+display:flex; align-items:center; justify-content:center;
+padding:0;
+flex-shrink:0;
+}
+.stepper button:active{ background: var(--rojo); color: var(--crema); }
+.qty-input{
+width: 40px;
+text-align:center;
+border: 1px solid var(--linea-clara);
+border-radius: 5px;
+padding: 3px 2px;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+font-weight: 700;
+font-size: 0.9rem;
+color: var(--carbon);
+background: #fff;
+-moz-appearance: textfield;
+}
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+tr.fila-pedido.con-cantidad td{ background: rgba(192,138,53,0.12); }
+.barra-pedido{
+position: sticky;
+bottom: 0;
+z-index: 20;
+background: var(--carbon);
+color: var(--crema);
+padding: 14px 24px;
+display:flex;
+align-items:center;
+justify-content: space-between;
+gap: 16px;
+flex-wrap: wrap;
+box-shadow: 0 -6px 20px rgba(0,0,0,0.25);
+}
+.barra-info{ font-size: 0.9rem; color: var(--crema-suave); }
+.barra-info strong{ color: var(--oro-suave); font-size: 1.15rem; }
+.barra-botones{
+display:flex;
+align-items:center;
+gap: 10px;
+flex-wrap: wrap;
+}
+.btn-limpiar{
+background: transparent;
+color: var(--crema-suave);
+border: 1px solid var(--linea);
+border-radius: 999px;
+padding: 12px 20px;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+font-weight: 700;
+font-size: 0.88rem;
+cursor: pointer;
+display:flex;
+align-items:center;
+gap: 6px;
+transition: background 0.12s ease;
+}
+.btn-limpiar:hover{ background: rgba(255,255,255,0.08); }
+.btn-enviar{
+background: var(--oro);
+color: var(--carbon);
+border: none;
+border-radius: 999px;
+padding: 12px 26px;
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+font-weight: 800;
+font-size: 0.95rem;
+cursor: pointer;
+display:flex;
+align-items:center;
+gap: 8px;
+transition: transform 0.12s ease;
+}
+.btn-enviar:hover{ transform: translateY(-1px); }
+.btn-enviar:disabled{ opacity: 0.45; cursor: not-allowed; transform:none; }
+td{
+padding: 9px 4px;
+font-size: 0.93rem;
+vertical-align: middle;
+}
+td.nombre{ color: #3a332c; font-weight: 700; }
+td.precio{
+text-align:right;
+color: var(--rojo);
+font-weight: 800;
+white-space: nowrap;
+font-variant-numeric: tabular-nums;
+}
+.unidad{ font-weight:500; color:#8a7d6c; font-size:0.82rem; }
+.ref-code{
+display:block;
+font-size: 0.68rem;
+font-weight: 600;
+color: #a89a85;
+letter-spacing: 0.2px;
+margin-bottom: 1px;
+}
+.etq{
+display:inline-block;
+font-size: 0.62rem;
+font-weight: 700;
+letter-spacing: 0.4px;
+padding: 2px 8px;
+border-radius: 999px;
+margin-left: 8px;
+vertical-align: middle;
+text-transform: uppercase;
+}
+.etq-nuevo{ background: var(--oro); color: var(--carbon); }
+.etq-top{ background: var(--carbon); color: var(--oro-suave); }
+.pie{
+background: var(--carbon);
+color: var(--crema-suave);
+text-align:center;
+padding: 22px 20px;
+font-size: 0.85rem;
+line-height: 1.6;
+}
+.pie strong{ color: var(--oro-suave); }
+@media (max-width: 820px){
+.columnas, .info-franja{ grid-template-columns: 1fr; }
+.columna:first-child, .info-bloque:first-child{ border-right: none; border-bottom: 1px solid var(--linea-clara); }
+.logo-txt{ font-size: 2.4rem; }
+}
+</style>
+</head>
+<body>
+<div class="hoja">
+<!-- CABECERA -->
+<div class="cabecera">
+<div class="marca-fila">
+<div>
+<div class="logo-txt">DISCARTEN</div>
+<p class="eslogan">De Discarten a tu negocio</p>
+</div>
+</div>
+<div class="sellos">
+<div class="sello">🔪 Corte artesanal diario</div>
+<div class="sello">🚚 Reparto propio</div>
+<div class="sello">✔️ Trazabilidad garantizada</div>
+</div>
+</div>
+
+<div class="datos">
+ALOYAM CANARIAS SLU &nbsp;·&nbsp; Carnicería Discarten &nbsp;·&nbsp; Calle San Cristóbal, Ravelo (El Sauzal, Tenerife) &nbsp;·&nbsp; Tel: 922 584 678
+</div>
+
+<!-- REPARTO / PEDIDOS -->
+<div class="info-franja">
+<div class="info-bloque">
+<p class="info-titulo">📦 Reparto</p>
+<strong>Martes:</strong> Norte, Centro y Sur<br>
+<strong>Miércoles:</strong> Centro<br>
+<strong>Jueves:</strong> Centro y Sur<br>
+<strong>Viernes:</strong> Centro y Norte
+</div>
+<div class="info-bloque">
+<p class="info-titulo">📱 Pedidos</p>
+Los pedidos se recibirán <strong>únicamente por WhatsApp</strong> al <strong>922 584 678</strong>.<br>
+Encárgalo hoy y lo tienes fresco en tu próximo reparto.
+</div>
+</div>
+
+<div class="cta">
+¿Hacemos el pedido de esta semana? Escríbenos por WhatsApp al <a href="https://wa.me/34922584678">922 584 678</a> 🥩
+</div>
+
+<!-- PRODUCTOS -->
+<div class="columnas">
+<!-- COLUMNA IZQUIERDA -->
+<div class="columna">
+<div class="familia">
+<div class="familia-cab">
+<span class="familia-emoji">🐖</span>
+<span class="familia-nombre">Cochino Fresco</span>
+</div>
+<table>
+<thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+<tr class="fila-pedido" data-price="4.30" data-nombre="Cochino Canal País (40-45 kg aprox)" data-min="42.5" data-step="42.5" data-ref="35"><td class="nombre"><span class="ref-code">Ref. 35</span>Cochino Canal País (40-45 kg aprox)</td><td class="precio">4,30 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="42.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.05" data-nombre="Cochino Canal Picado (40-45 kg aprox)" data-min="42.5" data-step="42.5" data-ref="51"><td class="nombre"><span class="ref-code">Ref. 51</span>Cochino Canal Picado (40-45 kg aprox)</td><td class="precio">5,05 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="42.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.10" data-nombre="Jamón de Cochino (12 kg aprox)" data-min="12" data-step="12" data-ref="8"><td class="nombre"><span class="ref-code">Ref. 8</span>Jamón de Cochino (12 kg aprox)</td><td class="precio">4,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="12" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.10" data-nombre="Jamón cochino picado (12 kg aprox)" data-min="12" data-step="12" data-ref="53"><td class="nombre"><span class="ref-code">Ref. 53</span>Jamón cochino picado (12 kg aprox)</td><td class="precio">5,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="12" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.85" data-nombre="Jamón cochino deshuesado (9 kg aprox)" data-min="9" data-step="9" data-ref="6"><td class="nombre"><span class="ref-code">Ref. 6</span>Jamón cochino deshuesado (9 kg aprox)</td><td class="precio">5,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="9" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="8.20" data-nombre="Bistec jamón cochino (+5 kilos)" data-min="5" data-ref="202"><td class="nombre"><span class="ref-code">Ref. 202</span>Bistec jamón cochino (+5 kilos)</td><td class="precio">8,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.50" data-nombre="Centro de Cochino (18 kg aprox)" data-min="18" data-step="18" data-ref="11"><td class="nombre"><span class="ref-code">Ref. 11</span>Centro de Cochino (18 kg aprox)</td><td class="precio">5,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="18" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="6.50" data-nombre="Centro de cochino picado (18 kg aprox)" data-min="18" data-step="18" data-ref="101"><td class="nombre"><span class="ref-code">Ref. 101</span>Centro de cochino picado (18 kg aprox)</td><td class="precio">6,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="18" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.95" data-nombre="Chuleta cochino XL (+5 kilos)" data-min="5" data-ref="300"><td class="nombre"><span class="ref-code">Ref. 300</span>Chuleta cochino XL (+5 kilos)<span class="etq etq-top">Top</span></td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="10.75" data-nombre="Solomillo de Cerdo" data-ref="14"><td class="nombre"><span class="ref-code">Ref. 14</span>Solomillo de Cerdo</td><td class="precio">10,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="10.95" data-nombre="Secreto Duroc" data-ref="160"><td class="nombre"><span class="ref-code">Ref. 160</span>Secreto Duroc<span class="etq etq-top">Top</span></td><td class="precio">10,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.10" data-nombre="Paleta de Cochino (7,5 kg aprox)" data-min="7.5" data-step="7.5" data-ref="9"><td class="nombre"><span class="ref-code">Ref. 9</span>Paleta de Cochino (7,5 kg aprox)</td><td class="precio">4,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="7.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.10" data-nombre="Paleta cochino picada (7,5 kg aprox)" data-min="7.5" data-step="7.5" data-ref="55"><td class="nombre"><span class="ref-code">Ref. 55</span>Paleta cochino picada (7,5 kg aprox)</td><td class="precio">5,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="7.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.25" data-nombre="Paleta cochino deshuesada (5,5 kg aprox)" data-min="5.5" data-step="5.5" data-ref="7"><td class="nombre"><span class="ref-code">Ref. 7</span>Paleta cochino deshuesada (5,5 kg aprox)</td><td class="precio">5,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="5.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.20" data-nombre="Carne fiesta paleta (+5 kilos)" data-min="5" data-ref="201"><td class="nombre"><span class="ref-code">Ref. 201</span>Carne fiesta paleta (+5 kilos)</td><td class="precio">7,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="6.85" data-nombre="Costillar de cochino c/piel (entre 6-7 kilos)" data-min="6.5" data-step="6.5" data-ref="12"><td class="nombre"><span class="ref-code">Ref. 12</span>Costillar de cochino c/piel (entre 6-7 kilos)</td><td class="precio">6,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="6.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.85" data-nombre="Costillar c/piel picado (entre 6-7 kilos)" data-min="6.5" data-step="6.5" data-ref="52"><td class="nombre"><span class="ref-code">Ref. 52</span>Costillar c/piel picado (entre 6-7 kilos)</td><td class="precio">7,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="6.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="8.25" data-nombre="Costillar cochino sin piel (entre 5-6 kilos)" data-min="5.5" data-step="5.5" data-ref="64"><td class="nombre"><span class="ref-code">Ref. 64</span>Costillar cochino sin piel (entre 5-6 kilos)</td><td class="precio">8,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="5.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="9.25" data-nombre="Costillas cochino sin piel" data-ref="108"><td class="nombre"><span class="ref-code">Ref. 108</span>Costillas cochino sin piel</td><td class="precio">9,25 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="8.95" data-nombre="Costillas de cochino c/piel" data-ref="5"><td class="nombre"><span class="ref-code">Ref. 5</span>Costillas de cochino c/piel</td><td class="precio">8,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="6.95" data-nombre="Picada de cochino (+5 kilos)" data-min="5" data-ref="67"><td class="nombre"><span class="ref-code">Ref. 67</span>Picada de cochino (+5 kilos)</td><td class="precio">6,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.50" data-nombre="Asadura de cochino entera (entre 4-5 kilos)" data-min="4.5" data-step="4.5" data-ref="43"><td class="nombre"><span class="ref-code">Ref. 43</span>Asadura de cochino entera (entre 4-5 kilos)</td><td class="precio">4,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="4.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.20" data-nombre="Asadura de cochino picada (entre 4-5 kilos)" data-min="4.5" data-step="4.5" data-ref="16"><td class="nombre"><span class="ref-code">Ref. 16</span>Asadura de cochino picada (entre 4-5 kilos)</td><td class="precio">5,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="4.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+<div class="familia">
+<div class="familia-cab">
+<span class="familia-emoji">🐔🐐🐇</span>
+<span class="familia-nombre">Pollo, Cabra y Conejo</span>
+</div>
+<table>
+<thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+<tr class="fila-pedido" data-price="4.85" data-nombre="Pollos frescos asar" data-ref="87"><td class="nombre"><span class="ref-code">Ref. 87</span>Pollos frescos asar</td><td class="precio">4,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.40" data-nombre="Pollo asar picado" data-ref="88"><td class="nombre"><span class="ref-code">Ref. 88</span>Pollo asar picado</td><td class="precio">5,40 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.85" data-nombre="Pollo sopa - arroz entero" data-ref="187"><td class="nombre"><span class="ref-code">Ref. 187</span>Pollo sopa - arroz entero</td><td class="precio">4,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="5.40" data-nombre="Pollo sopa - arroz picado" data-ref="188"><td class="nombre"><span class="ref-code">Ref. 188</span>Pollo sopa - arroz picado</td><td class="precio">5,40 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="9.95" data-nombre="Conejos frescos (1,5 kg aprox)" data-min="1.5" data-step="1.5" data-ref="18"><td class="nombre"><span class="ref-code">Ref. 18</span>Conejos frescos (1,5 kg aprox)</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="10.50" data-nombre="Conejos frescos picados (1,5 kg aprox)" data-min="1.5" data-step="1.5" data-ref="65"><td class="nombre"><span class="ref-code">Ref. 65</span>Conejos frescos picados (1,5 kg aprox)</td><td class="precio">10,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1.5" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.80" data-nombre="Cabra fresca entera (15 kg aprox)" data-min="15" data-step="15" data-ref="40"><td class="nombre"><span class="ref-code">Ref. 40</span>Cabra fresca entera (15 kg aprox)</td><td class="precio">7,80 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="15" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="9.75" data-nombre="Cabra fresca picada (+5 kilos)" data-min="5" data-ref="17"><td class="nombre"><span class="ref-code">Ref. 17</span>Cabra fresca picada (+5 kilos)</td><td class="precio">9,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+<div class="familia">
+<div class="familia-cab">
+<span class="familia-emoji">🍔</span>
+<span class="familia-nombre">Burgers</span>
+</div>
+<table>
+<thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Uds</th></tr></thead>
+<tr class="fila-pedido" data-price="7.95" data-nombre="Burguer Meat Cochino Canario 120g" data-peso-unidad="0.12" data-ref="100173"><td class="nombre"><span class="ref-code">Ref. 100173</span>Burguer Meat Cochino Canario 120g</td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="9.95" data-nombre="Burguer Meat Pollo Canario 120g" data-peso-unidad="0.12" data-ref="150152"><td class="nombre"><span class="ref-code">Ref. 150152</span>Burguer Meat Pollo Canario 120g</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="10.95" data-nombre="Burguer Meat Cochino Negro 150g" data-peso-unidad="0.15" data-ref="154"><td class="nombre"><span class="ref-code">Ref. 154</span>Burguer Meat Cochino Negro 150g</td><td class="precio">10,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="11.20" data-nombre="Burguer Ternera / Cerdo Canario 120g" data-peso-unidad="0.12" data-ref="252"><td class="nombre"><span class="ref-code">Ref. 252</span>Burguer Ternera / Cerdo Canario 120g</td><td class="precio">11,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="14.50" data-nombre="Burguer Meat Ternera Canaria 150g" data-peso-unidad="0.15" data-ref="205"><td class="nombre"><span class="ref-code">Ref. 205</span>Burguer Meat Ternera Canaria 150g</td><td class="precio">14,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="17.50" data-nombre="Ternera Canaria La Madurita 150g (+30d)" data-peso-unidad="0.15" data-ref="285"><td class="nombre"><span class="ref-code">Ref. 285</span>Ternera Canaria La Madurita 150g (+30d)<span class="etq etq-top">Top</span></td><td class="precio">17,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+</div>
+<!-- COLUMNA DERECHA -->
+<div class="columna">
+<div class="familia">
+<div class="familia-cab">
+<span class="familia-emoji">🐄</span>
+<span class="familia-nombre">Añojo Fresco</span>
+</div>
+<table>
+<thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+<tr class="fila-pedido" data-price="8.35" data-nombre="Picada de Añojo 2ª y Cochino (+5 kilos)" data-min="5" data-ref="68"><td class="nombre"><span class="ref-code">Ref. 68</span>Picada de Añojo 2ª y Cochino (+5 kilos)</td><td class="precio">8,35 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="9.95" data-nombre="Picada Añojo 2ª (+5 kilos)" data-min="5" data-ref="39"><td class="nombre"><span class="ref-code">Ref. 39</span>Picada Añojo 2ª (+5 kilos)</td><td class="precio">9,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="12.10" data-nombre="Falda de Añojo (+5 kilos)" data-min="5" data-ref="111"><td class="nombre"><span class="ref-code">Ref. 111</span>Falda de Añojo (+5 kilos)</td><td class="precio">12,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="12.10" data-nombre="Componer Añojo 2ª (+5 kilos)" data-min="5" data-ref="115"><td class="nombre"><span class="ref-code">Ref. 115</span>Componer Añojo 2ª (+5 kilos)</td><td class="precio">12,10 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="16.95" data-nombre="Lomo Añojo c/Solomillo (30 kg aprox)" data-min="30" data-step="30" data-ref="79"><td class="nombre"><span class="ref-code">Ref. 79</span>Lomo Añojo c/Solomillo (30 kg aprox)</td><td class="precio">16,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="30" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="17.95" data-nombre="Lomo Añojo c/Solomillo Picado (30 kg aprox)" data-min="30" data-step="30" data-ref="179"><td class="nombre"><span class="ref-code">Ref. 179</span>Lomo Añojo c/Solomillo Picado (30 kg aprox)</td><td class="precio">17,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="30" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="19.85" data-nombre="Chuletón de Añojo" data-ref="70"><td class="nombre"><span class="ref-code">Ref. 70</span>Chuletón de Añojo<span class="etq etq-top">Top</span></td><td class="precio">19,85 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="20.45" data-nombre="T-Bone Añojo" data-ref="96"><td class="nombre"><span class="ref-code">Ref. 96</span>T-Bone Añojo<span class="etq etq-top">Top</span></td><td class="precio">20,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="14.20" data-nombre="Bistec Novillo" data-ref="171"><td class="nombre"><span class="ref-code">Ref. 171</span>Bistec Novillo</td><td class="precio">14,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+<div class="familia">
+<div class="familia-cab">
+<span class="familia-emoji familia-icono">
+<svg width="26" height="26" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 14c0-3.5 2.8-6 6.2-6 2.2 0 4 1.1 5.1 2.8C21 9.1 23.4 8 26 8c3.6 0 6.5 2.2 7.4 5.4C36.8 14 39.5 17 39.5 21c0 3.6-2.4 6.3-5.6 7.1C33 31.6 30.2 34 26.8 34c-2 0-3.8-.8-5-2.1C20.5 33.4 18.5 34 16.3 34 11.2 34 7 29.9 7 24.8c0-2.7 1.2-5.1 3.1-6.7C9.1 17 8 15.6 8 14z" fill="#8a4a2b"/>
+<path d="M11.5 15.5c1.5-1.5 3.7-1.7 5-.4M23.5 11.5c1.6-1.2 3.8-1.2 5.3.1M30 17c1.7-.7 3.7-.2 4.8 1.2M14 24c1.7-1 3.8-.8 5.1.6M25 26c1.6-1 3.7-.7 4.9.6" stroke="#5c3018" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+<circle cx="14.5" cy="9" r="2.6" fill="#5c3018"/>
+<circle cx="34" cy="15" r="2.6" fill="#5c3018"/>
+<circle cx="30" cy="31" r="2.6" fill="#5c3018"/>
+</svg>
+</span>
+<span class="familia-nombre">Productos de Elaboración Propia, Salados y Guisos</span>
+</div>
+<table>
+<thead><tr><th class="th-nombre"></th><th class="th-precio"></th><th class="th-cant">Kg</th></tr></thead>
+<tr class="fila-pedido" data-price="6.50" data-nombre="Picadillo Salado (1kg manitas, orejas, morros y papada)" data-ref="22"><td class="nombre"><span class="ref-code">Ref. 22</span>Picadillo Salado (1kg manitas, orejas, morros y papada)</td><td class="precio">6,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.95" data-nombre="Costillas Punto Sal (+5 kilos)" data-min="5" data-ref="27"><td class="nombre"><span class="ref-code">Ref. 27</span>Costillas Punto Sal (+5 kilos)</td><td class="precio">7,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="8.45" data-nombre="Costillas Punto Sal Cortadas (+5 kilos)" data-min="5" data-ref="105"><td class="nombre"><span class="ref-code">Ref. 105</span>Costillas Punto Sal Cortadas (+5 kilos)</td><td class="precio">8,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="7.20" data-nombre="Panceta Salada" data-ref="197"><td class="nombre"><span class="ref-code">Ref. 197</span>Panceta Salada</td><td class="precio">7,20 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.95" data-nombre="Papada Salada" data-ref="61"><td class="nombre"><span class="ref-code">Ref. 61</span>Papada Salada</td><td class="precio">4,95 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="3.50" data-nombre="Manitas Saladas" data-ref="92"><td class="nombre"><span class="ref-code">Ref. 92</span>Manitas Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="4.45" data-nombre="Manitas Saladas Picadas" data-ref="98"><td class="nombre"><span class="ref-code">Ref. 98</span>Manitas Saladas Picadas</td><td class="precio">4,45 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="3.50" data-nombre="Orejas Cerdo Saladas" data-ref="97"><td class="nombre"><span class="ref-code">Ref. 97</span>Orejas Cerdo Saladas</td><td class="precio">3,50 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+<tr class="fila-pedido" data-price="8.75" data-nombre="Bacon Horneado Ahumado" data-ref="8010000465"><td class="nombre"><span class="ref-code">Ref. 8010000465</span>Bacon Horneado Ahumado</td><td class="precio">8,75 € <span class="unidad">/kg</span></td><td class="cantidad-col"><div class="stepper"><button type="button" class="btn-menos" aria-label="Menos">&minus;</button><input type="number" class="qty-input" min="0" step="1" value="0" inputmode="numeric"><button type="button" class="btn-mas" aria-label="Más">+</button></div></td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<!-- BARRA DE PEDIDO -->
+<div class="barra-pedido">
+<div class="barra-info">Total del pedido: <strong id="total-pedido">0,00 €</strong></div>
+<div class="barra-botones">
+<button type="button" class="btn-limpiar" id="btn-limpiar">🗑️ Vaciar pedido</button>
+<button type="button" class="btn-enviar" id="btn-enviar" disabled>📲 Enviar pedido por WhatsApp</button>
+</div>
+</div>
+
+<!-- PIE -->
+<div class="pie">
+<strong>Carnicería Discarten</strong> · ALOYAM CANARIAS SLU · Calle San Cristóbal, Ravelo (El Sauzal, Tenerife)
+</div>
+
+</div>
+
+<script>
+(function(){
+  var filas = document.querySelectorAll('.fila-pedido');
+  var totalEl = document.getElementById('total-pedido');
+  var btnEnviar = document.getElementById('btn-enviar');
+  var btnLimpiar = document.getElementById('btn-limpiar');
+
+  function calcularTotal(){
+    var total = 0;
+    var hayCantidad = false;
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var precio = parseFloat(fila.dataset.price) || 0;
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        hayCantidad = true;
+        total += precio * cantidad;
+      }
+    });
+    totalEl.textContent = total.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €';
+    btnEnviar.disabled = !hayCantidad;
+  }
+
+  filas.forEach(function(fila){
+    var input = fila.querySelector('.qty-input');
+    var btnMas = fila.querySelector('.btn-mas');
+    var btnMenos = fila.querySelector('.btn-menos');
+    var step = parseFloat(fila.dataset.step) || parseFloat(input.step) || 1;
+    var min = parseFloat(fila.dataset.min) || 0;
+
+    function actualizar(valor){
+      valor = Math.max(0, valor);
+      valor = Math.round(valor * 100) / 100;
+      input.value = valor;
+      if(valor > 0){
+        fila.classList.add('con-cantidad');
+      } else {
+        fila.classList.remove('con-cantidad');
+      }
+      calcularTotal();
+    }
+
+    btnMas.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      if(actual === 0 && min > 0){
+        actualizar(min);
+      } else {
+        actualizar(actual + step);
+      }
+    });
+
+    btnMenos.addEventListener('click', function(){
+      var actual = parseFloat(input.value) || 0;
+      var nuevo = actual - step;
+      if(min > 0 && nuevo < min){
+        nuevo = 0;
+      }
+      actualizar(nuevo);
+    });
+
+    input.addEventListener('change', function(){
+      actualizar(parseFloat(input.value) || 0);
+    });
+  });
+
+  btnLimpiar.addEventListener('click', function(){
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      input.value = 0;
+      fila.classList.remove('con-cantidad');
+    });
+    calcularTotal();
+  });
+
+  btnEnviar.addEventListener('click', function(){
+    var lineas = [];
+    filas.forEach(function(fila){
+      var input = fila.querySelector('.qty-input');
+      var cantidad = parseFloat(input.value) || 0;
+      if(cantidad > 0){
+        var nombre = fila.dataset.nombre;
+        lineas.push('• ' + nombre + ': ' + cantidad + ' kg/uds');
+      }
+    });
+    if(lineas.length === 0) return;
+    var mensaje = 'Hola, quiero hacer este pedido:%0A%0A' + lineas.join('%0A');
+    window.open('https://wa.me/34922584678?text=' + mensaje, '_blank');
+  });
+
+  calcularTotal();
+})();
+</script>
+
+</body>
+</html>
